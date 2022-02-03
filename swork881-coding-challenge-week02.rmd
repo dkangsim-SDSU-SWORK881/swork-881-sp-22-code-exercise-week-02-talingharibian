@@ -1,44 +1,106 @@
 ---
 title: "SWORK 881 week02"
-author: "your name goes here "
-date: "MM/DD/YYYY"
+author: "Talin Gharibian "
+date: "02/02/2022"
 output: html_document
 ---
 
+
 # load libraries
 ```{r setup, include=FALSE}
-
+library(tidyverse)
+library(tidymodels)
 ```
 
 
 # Data
 ```{r}
 # load data
-give_your_data_name_here<- read_csv("")
+data.01 <- read_csv("Data/LHS_exercise_01272022.csv")
 
 #how many observations and variables? 
-
 ```
 #how many observations and variables? 
-[provide your answer here]
+268 Observations; 8 Variables
 
 
 ```{r}
 # create a new variable called `depression` by summing all ptsd variables. Use tidy approach
+data.02 <- data.01%>%
+  mutate(depression_score = ptsd1_1 + ptsd2_1 + ptsd3_1 + ptsd4_1)
 
+```
 
+```{r}
+data.03 <- data.01%>%
+  select(ptsd1_1, ptsd2_1, ptsd3_1, ptsd4_1, age, education, sex)%>%
+  mutate(depression_score = rowSums(across(ptsd1_1:ptsd4_1)), na.rm=T)
 ```
 
 
 ```{r}
 #run simple descriptive statistics for all variables
-
-
+summary(data.03)
 ```
 
-DESCRIBE THE DATA BRIEFLY HERE
-[provide your answer here]
+```{r}
+mean(data.01$age)
+sd(data.01$age)
 
+ftable(data.01$sex)
+
+ftable(data.01$education)
+
+ftable(data.01$ptsd1_1)
+
+ftable(data.01$ptsd2_1)
+
+ftable(data.01$ptsd3_1)
+
+ftable(data.01$ptsd4_1)
+```
+
+
+DESCRIBE THE DATA BRIEFLY HERE
+Age mean (sd) : 32.11 (12.478)
+
+Sex 
+female : 164 (61.2%)
+male : 104 (38.8%)
+    
+Education
+1 - Less than high school : 18 (6.7%)
+2 - Graduated high school : 91 (33.9%)
+3 - Some college : 86 (32.1%)
+4 - Graduated college or higher : 73 (27.2%)
+
+PTSD 1
+1 - Extremely : 121 (45.1%)
+2 - Quite a bit : 72 (26.8%)
+3 - Moderately : 34 (12.6%)
+4 - A little bit : 24 (8.9%)
+5 - Not at all : 17 (6.3%)
+
+PTSD 2
+1 : 89 (33.2%)
+2 : 65 (24.2%)
+3 : 47 (17.5%)
+4 : 48 (17.9%)
+5 : 19 (7.08%)
+
+PTSD 3
+1 : 122 (45.5%)
+2 : 48 (17.9%)
+3 : 35 (13.0%)
+4 : 39 (14.5%)
+5 : 24 (8.9%)
+
+PTSD 4
+1 : 119 (44.4%)
+2 : 52 (19.4%)
+3 : 30 (11.2%)
+4 : 37 (13.8%)
+5 : 30 (11.2%)
 
 
 # Model and Visualization
@@ -48,20 +110,26 @@ Create a linear regression model that answers the question above. Print the resu
 
 ```{r}
 # lm
+fit.1 <- lm(depression_score ~ age + education + factor(sex),
+            data=data.03)
+summary(fit.1)
 
 ```
 
 
 ```{r}
 # model diagnostics
-
+par(mfrow=c(2,2))
+plot(fit.)
 
 ```
 
 
 ```{r}
 # use ggplot to plot histogram of residuals (use 20 bins)
-
+ggplot(fit.1,
+       aes(fit.1$residuals))+
+  geom_histogram(bins = 20)
 
 ```
 
@@ -69,3 +137,4 @@ Create a linear regression model that answers the question above. Print the resu
 
 Describe and interpret your results, including any statistical information you believe important: 
 
+We fit a linear regression model to measure the effect of `age`, `sex`, and `education` on `depression score.' Sex was not a significant predictor of depression score. Education was also not a significant predictor of depression score. Age was a statistically significant predictor of depression score (p value = 0.01). The residuals do not follow a normal distribution.
